@@ -1,48 +1,69 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import HRISidebar from '../../components/HRISidebar';
+import CompanySidebar from '../../../components/CompanySidebar';
 import { Search, Menu, User, LogOut } from 'lucide-react';
-import { logout } from '../services/auth';
+import { logout } from '../../services/auth';
 
-export default function DashboardLayout({ children }) {
-  const router = useRouter();
+export default function CompanyDashboardLayout({ children }) {
   const dropdownRef = useRef(null);
   
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState('hr@example.com');
+  const [userEmail, setUserEmail] = useState('company@example.com');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      const token = localStorage.getItem('token');
+    function verifySession() {
+      if (typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
 
-      if (!token || !storedUser) {
-        router.push('/login');
-        return;
+        // REPAIR CORE: Catch slow storage operations by allowing a 200ms fallback retry window
+        if (!token || !storedUser) {
+          setTimeout(() => {
+            const retryUser = localStorage.getItem('user');
+            const retryToken = localStorage.getItem('token');
+            if (retryToken && retryUser) {
+              processUser(retryUser);
+            } else {
+              window.location.href = '/login';
+            }
+          }, 200);
+          return;
+        }
+
+        processUser(storedUser);
       }
+    }
 
+    function processUser(userData) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.role === 'hr') {
+        const parsedUser = JSON.parse(userData);
+        
+        // Comprehensive case-insensitive verification string check
+        if (parsedUser && parsedUser.role && parsedUser.role.toLowerCase() === 'company') {
           setIsAuthorized(true);
           if (parsedUser.email) {
             setUserEmail(parsedUser.email);
           }
         } else {
-          router.push('/login');
+          console.warn("Unauthorized user role reached company layout:", parsedUser?.role);
+          localStorage.clear();
+          window.location.href = '/login';
         }
       } catch (error) {
-        console.error("Session profile reading failure:", error);
-        router.push('/login');
+        console.error("Session profile parsing failure:", error);
+        window.location.href = '/login';
+      } finally {
+        setIsLoading(false);
       }
     }
-  }, [router]);
 
-  // Close the profile dropdown automatically if clicking outside of it
+    verifySession();
+  }, []);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -55,21 +76,19 @@ export default function DashboardLayout({ children }) {
 
   const handleLogoutAction = () => {
     logout();
-    router.push('/login');
+    window.location.href = '/login';
   };
 
-  if (!isAuthorized) {
+  if (isLoading || !isAuthorized) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center font-sans text-xs font-bold text-gray-400">
-        Authenticating secure session environment...
+        Securing authorization workspace parameters...
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] antialiased relative">
-      
-      {/* Background Backdrop Overlay for mobile view drawer */}
       {!isCollapsed && (
         <div 
           onClick={() => setIsCollapsed(true)}
@@ -77,16 +96,14 @@ export default function DashboardLayout({ children }) {
         />
       )}
 
-      {/* Sidebar Component */}
-      <HRISidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      <CompanySidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
-      {/* Main Content Frame Container */}
       <div 
         className={`transition-all duration-300 ease-in-out pl-[75px] ${
           isCollapsed ? 'md:pl-[75px]' : 'md:pl-[290px]'
         }`}
       >
-        {/* ================= ONE SINGLE GLOBAL TOP NAVIGATION BAR ================= */}
+        {/* Unified Custom Top Navigation Header */}
         <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-20 shadow-[0_1px_4px_rgba(0,0,0,0.003)]">
           <div className="flex items-center gap-4 select-none">
             <button 
@@ -116,29 +133,23 @@ export default function DashboardLayout({ children }) {
 
             <div className="h-5 w-[1px] bg-gray-200"></div>
 
-            {/* ================= PROFILE AVATAR CONTAINER WITH INTERACTIVE DROPDOWN ================= */}
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-3 cursor-pointer focus:outline-none group select-none"
               >
-                {/* Simulated profile badge matching layout style specs */}
                 <div className="w-9 h-9 rounded-full bg-[#0da777]/10 border border-[#0da777]/20 flex items-center justify-center overflow-hidden transition-transform active:scale-95">
-                  <span className="text-xs font-black text-[#0da777] uppercase">HR</span>
+                  <span className="text-xs font-black text-[#0da777] uppercase">CO</span>
                 </div>
               </button>
 
-              {/* High-Fidelity Profile Floating Menu Card */}
               {isProfileOpen && (
                 <div className="absolute right-0 mt-3 w-64 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.05)] py-2 z-50 animate-fadeIn overflow-hidden">
-                  
-                  {/* Account Metadata Segment */}
                   <div className="px-5 py-3 border-b border-gray-50">
-                    <h4 className="text-sm font-black text-gray-800 leading-none">HR</h4>
+                    <h4 className="text-sm font-black text-gray-800 leading-none">Company</h4>
                     <p className="text-xs font-medium text-gray-400 mt-1.5 truncate">{userEmail}</p>
                   </div>
 
-                  {/* Menu Options Action Links */}
                   <div className="p-1.5 space-y-0.5">
                     <button 
                       onClick={() => setIsProfileOpen(false)}
@@ -156,16 +167,13 @@ export default function DashboardLayout({ children }) {
                       <span>Log out</span>
                     </button>
                   </div>
-
                 </div>
               )}
             </div>
-
           </div>
         </header>
 
-        {/* Core Subroute Workspace Injection Frame Container */}
-        <main>{children}</main>
+        <main className="w-full min-w-0 overflow-hidden">{children}</main>
       </div>
     </div>
   );

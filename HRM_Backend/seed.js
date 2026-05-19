@@ -1,48 +1,46 @@
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-
-// IMPORTANT: match your real file name (lowercase user.js)
-const User = require("./src/models/user");
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
+const User = require('./src/models/User'); // Check this import matches your exact path structure
 
 dotenv.config();
 
 const seedUsers = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    // Connect to database
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hrm');
+    console.log('Database connection initialized for seeding...');
 
-    console.log("Database connection initialized for seeding...");
-
+    // Clear any broken stale entries
     await User.deleteMany();
-    console.log("Old user entries cleared.");
+    console.log('Old user entries cleared.');
 
-    const targetAccounts = [
+    // Mock accounts matching your quick login layouts perfectly
+    const mockUsers = [
       {
-        name: "Admin User",
-        email: "company@example.com",
-        password: "12345678",
-        role: "admin",
+        email: 'company@example.com',
+        password: '12345678',
+        role: 'company'
       },
       {
-        name: "HR User",
-        email: "hr@example.com",
-        password: "12345678",
-        role: "hr",
+        email: 'hr@example.com',
+        password: '12345678',
+        role: 'hr'
       },
       {
-        name: "Employee User",
-        email: "employee@example.com",
-        password: "12345678",
-        role: "employee",
-      },
+        email: 'employee@example.com',
+        password: '12345678',
+        role: 'employee'
+      }
     ];
 
-    await User.create(targetAccounts);
-
-    console.log("Successfully seeded Admin, HR, Employee!");
-
-    process.exit(0);
+    // Seed into Mongo instance
+    await User.create(mockUsers);
+    console.log('🎉 Successfully seeded 3 distinct Roles into Database!');
+    
+    process.exit();
   } catch (error) {
-    console.error("Seeding failed:", error);
+    console.error('Seeding failed:', error);
     process.exit(1);
   }
 };

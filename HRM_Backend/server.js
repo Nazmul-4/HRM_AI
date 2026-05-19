@@ -1,44 +1,37 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const connectDB = require('./src/config/db');
+
+// Route Imports
+const authRoutes = require('./src/routes/authRoutes');
+
+dotenv.config();
+
+// Initialize Database Connection
+connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
-
+// Global Middleware Config
 app.use(express.json());
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+// Robust CORS policy allowing the Next.js development server access
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("HRM Backend Running");
+// Mount API Route Endpoints
+app.use('/api/auth', authRoutes);
+
+// Base Diagnostic Route
+app.get('/', (req, res) => {
+  res.send('HRM Backend Running');
 });
 
-// Login Route Example
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
-
-  console.log(email, password);
-
-  res.json({
-    success: true,
-    message: "Login successful",
-  });
-});
-
-// Server Start
+// Explicit Port Binding
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server executing successfully on port ${PORT}`);
 });

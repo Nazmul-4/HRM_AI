@@ -1,33 +1,41 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-
-    role: {
-      type: String,
-      enum: ["admin", "hr", "manager", "employee"],
-      default: "employee",
-    },
+const UserSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true
   },
-  { timestamps: true }
-);
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['company', 'hr', 'employee'],
+    required: true,
+    lowercase: true 
+  }
+}, { timestamps: true });
 
-module.exports = mongoose.model("User", userSchema);
+// FIXED HOOK: Removed the 'next' parameter completely. 
+// Returning out or throwing an error inside an async middleware tells Mongoose when to proceed.
+UserSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    return false;
+  }
+};
+
+module.exports = mongoose.model('User', UserSchema);
