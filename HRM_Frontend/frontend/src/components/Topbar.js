@@ -2,18 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { Bell, Search } from 'lucide-react';
+import { getStoredSession } from '../services/auth';
 
 export default function Topbar() {
   const [userEmail, setUserEmail] = useState('User Context');
   const [userRole, setUserRole] = useState('Employee');
 
   useEffect(() => {
-    // Extract session from local storage safely inside client
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      setUserEmail(parsed.email);
-      setUserRole(parsed.role);
+    const session = getStoredSession();
+    if (session?.user) {
+      setUserEmail(session.user.email);
+      setUserRole(session.user.role);
     }
   }, []);
 

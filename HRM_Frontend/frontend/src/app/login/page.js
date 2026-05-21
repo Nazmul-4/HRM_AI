@@ -1,3 +1,4 @@
+// File: src/app/login/page.js
 "use client"; 
 
 import { useState } from 'react';
@@ -33,15 +34,24 @@ export default function LoginPage() {
       console.log('Session authorized successfully:', user);
       
       if (user && user.role) {
-        const userRole = user.role.toLowerCase();
-        
-        // CRITICAL REPAIR: window.location.href completely destroys the stale Next.js router cache footprint
-        if (userRole === 'company') {
+        const normalizedRole = String(user.role).trim().toLowerCase();
+
+        // Standardize the local storage format payload before checking guards
+        const storagePayload = {
+          ...user,
+          role: normalizedRole
+        };
+        localStorage.setItem('user', JSON.stringify(storagePayload));
+
+        // ROLE MANAGEMENT REDIRECTION ENGINE
+        if (normalizedRole === 'company') {
           window.location.href = '/dashboard/company';
-        } else if (userRole === 'hr') {
+        } else if (normalizedRole === 'hr') {
           window.location.href = '/dashboard/hr';
+        } else if (normalizedRole === 'employee') {
+          window.location.href = '/dashboard/employee';
         } else {
-          window.location.href = '/dashboard/hr';
+          setError('Your account role is not allowed to access a dashboard yet.');
         }
       } else {
         setError('Invalid user data signature received from system API.');
@@ -88,8 +98,8 @@ export default function LoginPage() {
               <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Email address</label>
               <input
                 type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all focus:border-[#0da777] outline-none"
-                placeholder="company@example.com"
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all focus:border-[#0da777] outline-none font-semibold"
+                placeholder="employee@example.com"
               />
             </div>
 
@@ -97,7 +107,7 @@ export default function LoginPage() {
               <label className="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Password</label>
               <input
                 type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all focus:border-[#0da777] outline-none"
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all focus:border-[#0da777] outline-none font-semibold"
                 placeholder="••••••••"
               />
             </div>

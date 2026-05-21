@@ -1,346 +1,363 @@
 "use client";
 
 import React from 'react';
-import { 
-  RefreshCw, Briefcase, Link2, ExternalLink, Users, 
-  Building2, Clock, CalendarDays, UserCheck, UserPlus, 
-  TrendingUp, ArrowRight, Bell, Calendar, ClipboardList, Video 
+import {
+  BadgeCheck,
+  Bell,
+  Briefcase,
+  Building2,
+  Calendar,
+  CalendarDays,
+  ClipboardList,
+  Copy,
+  ExternalLink,
+  Megaphone,
+  RefreshCw,
+  TrendingUp,
+  UserCheck,
+  UserPlus,
+  Users,
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area 
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
-export default function HRDashboardView() {
-  // Stat Metrics Dataset
-  const summaryCounters = [
-    { title: "Total Employees", value: "10", indicator: null, subText: "", color: "text-blue-600", bgColor: "bg-blue-50/70", icon: <Users size={18} /> },
-    { title: "Branches", value: "9", subText: "24 departments", color: "text-emerald-600", bgColor: "bg-emerald-50/70", icon: <Building2 size={18} /> },
-    { title: "Attendance Rate", value: "85.5%", subText: "45 present today", color: "text-purple-600", bgColor: "bg-purple-50/70", icon: <Clock size={18} /> },
-    { title: "Pending Leaves", value: "0", subText: "2 on leave today", color: "text-amber-600", bgColor: "bg-amber-50/70", icon: <CalendarDays size={18} /> },
-    { title: "Active Jobs", value: "11", trend: "+15 this month", color: "text-orange-600", bgColor: "bg-orange-50/70", icon: <Briefcase size={18} /> },
-    { title: "Total Candidates", value: "31", trend: "+31 this month", color: "text-indigo-600", bgColor: "bg-indigo-50/70", icon: <UserPlus size={18} /> }
-  ];
+const statCards = [
+  { title: 'Total Employees', value: '10', note: '+10 this month', icon: Users, color: '#3b82f6', bg: '#eff6ff' },
+  { title: 'Branches', value: '9', note: '24 departments', icon: Building2, color: '#22c55e', bg: '#ecfdf5' },
+  { title: 'Attendance Rate', value: '70%', note: '7 present today', icon: BadgeCheck, color: '#a855f7', bg: '#faf5ff' },
+  { title: 'Pending Leaves', value: '0', note: '0 on leave today', icon: CalendarDays, color: '#eab308', bg: '#fefce8' },
+  { title: 'Active Jobs', value: '11', note: '+15 this month', icon: Briefcase, color: '#f97316', bg: '#fff7ed' },
+  { title: 'Total Candidates', value: '31', note: '+31 this month', icon: UserPlus, color: '#6366f1', bg: '#eef2ff' },
+];
 
-  // Mock Feed Datasets
-  const leaveApplications = [
-    { name: "Employee", status: "Approved", type: "Annual Leave", span: "2026-01-07 - 2026-01-08", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-    { name: "Amie Jerde", status: "Approved", type: "Annual Leave", span: "2026-01-12 - 2026-01-12", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-    { name: "Caitlyn Harvey", status: "Approved", type: "Annual Leave", span: "2026-01-13 - 2026-01-14", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-    { name: "Burdette Rath", status: "Approved", type: "Sick Leave", span: "2026-01-16 - 2026-01-16", color: "bg-emerald-50 text-emerald-700 border-emerald-100" }
-  ];
+const departmentData = [
+  { name: 'IT', value: 4 },
+  { name: 'HR', value: 2 },
+  { name: 'Marketing', value: 2 },
+  { name: 'Operations', value: 2 },
+];
 
-  const recentCandidates = [
-    { name: "Geeta Devi", stage: "Offer", role: "Senior Software Engineer", date: "2025-12-23", color: "bg-orange-50 text-orange-600 border-orange-100" },
-    { name: "Nisha Agarwal", stage: "Interview", role: "Content Writer", date: "2025-12-27", color: "bg-purple-50 text-purple-600 border-purple-100" },
-    { name: "Ramesh Babu", stage: "Screening", role: "Network Administrator", date: "2025-12-26", color: "bg-amber-50 text-amber-600 border-amber-100" },
-    { name: "Tarun Malhotra", stage: "Offer", role: "Customer Support Representative", date: "2025-12-24", color: "bg-orange-50 text-orange-600 border-orange-100" }
-  ];
+const hiringTrendData = [
+  { month: 'Dec 2025', jobs: 2 },
+  { month: 'Jan 2026', jobs: 4 },
+  { month: 'Feb 2026', jobs: 5 },
+  { month: 'Mar 2026', jobs: 7 },
+  { month: 'Apr 2026', jobs: 9 },
+  { month: 'May 2026', jobs: 11 },
+];
 
-  const announcements = [
-    { title: "Welcome to New Financial Year 2025", type: "Company News", date: "2025-09-19", badge: "High Priority" },
-    { title: "Updated Employee Handbook and Policies", type: "Policy Updates", date: "2025-09-19", badge: "High Priority" },
-    { title: "Annual Performance Review Process", type: "HR Updates", date: "2025-09-19", badge: "High Priority" },
-    { title: "New Employee Benefits Program Launch", type: "Benefits", date: "2025-09-19", badge: null }
-  ];
+const candidateData = [
+  { name: 'New', value: 12 },
+  { name: 'Interview', value: 8 },
+  { name: 'Screening', value: 6 },
+  { name: 'Offer', value: 5 },
+];
 
-  const dynamicMeetings = [
-    { title: "Daily Scrum Meeting", status: "Scheduled", date: "2025-10-09", duration: "10:00:00 - 10:30:00" },
-    { title: "Daily Scrum Meeting", status: "Scheduled", date: "2025-10-06", duration: "10:00:00 - 10:30:00" },
-    { title: "Daily Scrum Meeting", status: "Scheduled", date: "2025-10-07", duration: "10:00:00 - 10:30:00" },
-    { title: "Daily Scrum Meeting", status: "Scheduled", date: "2025-10-08", duration: "10:00:00 - 10:30:00" }
-  ];
+const leaveData = [
+  { name: 'Annual Leave', value: 5 },
+  { name: 'Personal Leave', value: 3 },
+  { name: 'Sick Leave', value: 2 },
+  { name: 'Emergency Leave', value: 1 },
+  { name: 'Marriage Leave', value: 1 },
+  { name: 'Compensatory Leave', value: 2 },
+];
 
-  // Chart Mapping Datasets
-  const deptData = [
-    { name: 'Information Technology', value: 4 },
-    { name: 'Human Resources', value: 2 },
-    { name: 'Marketing', value: 2 },
-    { name: 'Operations', value: 2 },
-  ];
+const growthData = [
+  { month: 'Jan', employees: 15 },
+  { month: 'Feb', employees: 18 },
+  { month: 'Mar', employees: 24 },
+  { month: 'Apr', employees: 28 },
+  { month: 'May', employees: 35 },
+  { month: 'Jun', employees: 42 },
+  { month: 'Jul', employees: 46 },
+  { month: 'Aug', employees: 50 },
+  { month: 'Sep', employees: 44 },
+  { month: 'Oct', employees: 48 },
+  { month: 'Nov', employees: 51 },
+  { month: 'Dec', employees: 55 },
+];
 
-  const candidateData = [
-    { name: 'Interview', value: 8 },
-    { name: 'New', value: 12 },
-    { name: 'Offer', value: 5 },
-    { name: 'Screening', value: 6 },
-  ];
+const leaveApplications = [
+  { name: 'Employee', type: 'Annual Leave', date: '2026-01-07 - 2026-01-08', status: 'Approved' },
+  { name: 'Amie Jerde', type: 'Annual Leave', date: '2026-01-12 - 2026-01-12', status: 'Approved' },
+  { name: 'Caitlyn Harvey', type: 'Annual Leave', date: '2026-01-13 - 2026-01-14', status: 'Approved' },
+  { name: 'Burdette Rath', type: 'Sick Leave', date: '2026-01-16 - 2026-01-16', status: 'Approved' },
+];
 
-  const leaveData = [
-    { name: 'Annual Leave', value: 5 },
-    { name: 'Compensatory Leave', value: 2 },
-    { name: 'Emergency Leave', value: 1 },
-    { name: 'Marriage Leave', value: 1 },
-    { name: 'Personal Leave', value: 3 },
-    { name: 'Sick Leave', value: 2 },
-  ];
+const recentCandidates = [
+  { name: 'Geeta Devi', role: 'Senior Software Engineer', date: '2025-12-23', stage: 'Offer', color: 'orange' },
+  { name: 'Nisha Agarwal', role: 'Content Writer', date: '2025-12-27', stage: 'Interview', color: 'violet' },
+  { name: 'Ramesh Babu', role: 'Network Administrator', date: '2025-12-26', stage: 'Screening', color: 'amber' },
+  { name: 'Tarun Malhotra', role: 'Customer Support Representative', date: '2025-12-24', stage: 'Offer', color: 'orange' },
+];
 
-  const hiringTrendData = [
-    { month: 'Dec 2025', volume: 8 },
-    { month: 'Jan 2026', volume: 12 },
-    { month: 'Feb 2026', volume: 15 },
-    { month: 'Mar 2026', volume: 10 },
-    { month: 'Apr 2026', volume: 18 },
-    { month: 'May 2026', volume: 14 },
-  ];
+const announcements = [
+  { title: 'Welcome to New Financial Year 2025', category: 'Company News', date: '2025-09-19', priority: true },
+  { title: 'Updated Employee Handbook and Policies', category: 'Policy Updates', date: '2025-09-19', priority: true },
+  { title: 'Annual Performance Review Process', category: 'HR Updates', date: '2025-09-19', priority: true },
+  { title: 'New Employee Benefits Program Launch', category: 'Benefits', date: '2025-09-19', priority: false },
+];
 
-  const growthTrendData = [
-    { name: 'January', headCount: 15 },
-    { name: 'February', headCount: 5 },
-    { name: 'March', headCount: 22 },
-    { name: 'April', headCount: 10 },
-    { name: 'May', headCount: 28 },
-    { name: 'June', headCount: 32 },
-    { name: 'July', headCount: 35 },
-    { name: 'August', headCount: 50 },
-    { name: 'September', headCount: 42 },
-    { name: 'October', headCount: 45 },
-    { name: 'November', headCount: 48 },
-    { name: 'December', headCount: 52 },
-  ];
+const meetings = [
+  { title: 'Daily Scrum Meeting', date: '2025-10-09', time: '10:00:00 - 10:30:00', status: 'Scheduled' },
+  { title: 'Daily Scrum Meeting', date: '2025-10-06', time: '10:00:00 - 10:30:00', status: 'Scheduled' },
+  { title: 'Daily Scrum Meeting', date: '2025-10-07', time: '10:00:00 - 10:30:00', status: 'Scheduled' },
+  { title: 'Daily Scrum Meeting', date: '2025-10-08', time: '10:00:00 - 10:30:00', status: 'Scheduled' },
+];
 
-  const DEPT_COLORS = ['#0da777', '#3b82f6', '#8b5cf6', '#06b6d4'];
-  const CANDIDATE_COLORS = ['#8b5cf6', '#0ea5e9', '#0da777', '#f59e0b'];
-  const LEAVE_COLORS = ['#0da777', '#0ea5e9', '#f59e0b', '#f97316', '#84cc16', '#ef4444'];
+const chartColors = ['#00b894', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6'];
+
+function ChartCard({ title, icon: Icon, children }) {
+  return (
+    <section className="bg-white border border-slate-200/70 rounded-lg shadow-[0_12px_30px_rgba(15,23,42,0.035)] p-5 min-h-[315px] flex flex-col">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon size={15} className="text-slate-400" />
+        <h3 className="text-[13px] font-semibold text-slate-800">{title}</h3>
+      </div>
+      <div className="flex-1 min-h-0">{children}</div>
+    </section>
+  );
+}
+
+function FeedCard({ title, icon: Icon, count, children }) {
+  return (
+    <section className="bg-white border border-slate-200/70 rounded-lg shadow-[0_12px_30px_rgba(15,23,42,0.035)] p-5 min-h-[365px] flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Icon size={15} className="text-slate-400" />
+          <h3 className="text-[13px] font-semibold text-slate-800">{title}</h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="min-w-5 h-5 px-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold flex items-center justify-center">
+            {count}
+          </span>
+          <button className="text-[11px] font-semibold text-[#00b894] hover:text-[#029d80] transition-colors">
+            View All
+          </button>
+        </div>
+      </div>
+      <div className="space-y-3 overflow-y-auto pr-1">{children}</div>
+    </section>
+  );
+}
+
+function StageBadge({ candidate }) {
+  const styles = {
+    orange: 'bg-orange-50 text-orange-600 border-orange-100',
+    violet: 'bg-violet-50 text-violet-600 border-violet-100',
+    amber: 'bg-amber-50 text-amber-600 border-amber-100',
+  };
 
   return (
-    <div className="p-8 max-w-[1680px] mx-auto space-y-6 select-none font-sans bg-[#f8fafc]">
-      
-      {/* Header Panel */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h2>
-        <button className="flex items-center gap-2 bg-white border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] px-4 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
-          <RefreshCw size={13} />
-          <span>Refresh</span>
-        </button>
-      </div>
+    <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${styles[candidate.color]}`}>
+      {candidate.stage}
+    </span>
+  );
+}
 
-      {/* Stat Card Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
-        {summaryCounters.map((stat, index) => (
-          <div key={index} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.01)] relative flex flex-col justify-between min-h-[120px]">
-            <div className="space-y-1">
-              <span className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider">{stat.title}</span>
-              <h3 className="text-2xl font-black text-gray-800 tracking-tight">{stat.value}</h3>
-            </div>
-            <div className="text-[11px] font-bold mt-2">
-              {stat.subText && <span className="text-gray-400 font-semibold">{stat.subText}</span>}
-              {stat.trend && <span className="text-emerald-500 font-extrabold">{stat.trend}</span>}
-            </div>
-            <div className={`absolute right-4 top-4 w-9 h-9 rounded-xl ${stat.bgColor} ${stat.color} flex items-center justify-center shadow-sm`}>
-              {stat.icon}
-            </div>
+export default function HRDashboardView() {
+  return (
+    <div className="min-h-screen bg-[#f6f8fb] px-4 py-5 sm:px-6 lg:px-7 font-sans text-slate-800">
+      <div className="mx-auto max-w-[1660px] space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold text-slate-400">Home / Dashboard</p>
+            <h1 className="text-xl font-semibold tracking-tight text-slate-900">Dashboard</h1>
           </div>
-        ))}
-      </div>
-
-      {/* Career Banner */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.01)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#0da777] border border-emerald-100/30 flex items-center justify-center shadow-sm">
-            <Briefcase size={22} />
-          </div>
-          <div className="space-y-0.5">
-            <h4 className="text-base font-bold text-gray-800 tracking-tight">Join Our Team</h4>
-            <p className="text-xs font-semibold text-gray-400">
-              Discover amazing career opportunities <span className="text-gray-200 px-1">|</span> <span className="text-[#0da777] font-extrabold">● 11 open positions</span>
-            </p>
-          </div>
+          <button className="h-9 w-fit inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 px-3 text-[12px] font-semibold text-slate-600 shadow-sm hover:border-[#00b894]/50 hover:text-[#00b894] transition-colors">
+            <RefreshCw size={13} />
+            Refresh
+          </button>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer"><Link2 size={13} /><span>Copy Link</span></button>
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#0da777] text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#0b9368] shadow-sm active:scale-[0.98] transition-all cursor-pointer"><ExternalLink size={13} /><span>View Careers</span></button>
-        </div>
-      </div>
 
-      {/* Analytics Charts Row Matrix */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Chart 1 */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-[340px]">
-          <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2"><Building2 size={16} className="text-gray-400" /> Department Distribution</h3>
-          <div className="flex-1 min-h-0">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+          {statCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <article key={card.title} className="bg-white border border-slate-200/70 rounded-lg p-4 min-h-[92px] shadow-[0_12px_30px_rgba(15,23,42,0.035)] flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-medium text-slate-500">{card.title}</p>
+                  <h2 className="mt-1 text-[22px] leading-tight font-semibold text-slate-900">{card.value}</h2>
+                  <p className="mt-1 text-[10px] font-medium text-[#00b894]">{card.note}</p>
+                </div>
+                <div className="h-9 w-9 shrink-0 rounded-full flex items-center justify-center" style={{ color: card.color, backgroundColor: card.bg }}>
+                  <Icon size={16} />
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="bg-white border border-slate-200/70 rounded-lg p-4 shadow-[0_12px_30px_rgba(15,23,42,0.035)] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-11 w-11 rounded-lg bg-[#00b894] text-white flex items-center justify-center shadow-[0_10px_20px_rgba(0,184,148,0.18)]">
+              <Briefcase size={20} />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-slate-900">Join Our Team</h2>
+              <p className="text-[12px] font-medium text-slate-500">
+                Discover amazing career opportunities <span className="text-slate-300 px-1">|</span>
+                <span className="text-[#00b894] font-semibold">11 open positions</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button className="h-8 inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-[11px] font-semibold text-slate-600 hover:border-[#00b894]/50 hover:text-[#00b894] transition-colors">
+              <Copy size={12} />
+              Copy Link
+            </button>
+            <button className="h-8 inline-flex items-center justify-center gap-2 rounded-md bg-[#00b894] px-3 text-[11px] font-semibold text-white shadow-sm hover:bg-[#02a784] transition-colors">
+              <ExternalLink size={12} />
+              View Careers
+            </button>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <ChartCard title="Department Distribution" icon={Building2}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={deptData} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={3} dataKey="value">
-                  {deptData.map((entry, idx) => <Cell key={idx} fill={DEPT_COLORS[idx % DEPT_COLORS.length]} />)}
+                <Pie data={departmentData} cx="50%" cy="50%" innerRadius={52} outerRadius={78} paddingAngle={2} dataKey="value">
+                  {departmentData.map((entry, index) => (
+                    <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                  ))}
                 </Pie>
                 <Tooltip />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 11, fontWeight: 600 }} />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </ChartCard>
 
-        {/* Chart 2 */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-[340px]">
-          <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2"><TrendingUp size={16} className="text-gray-400" /> Hiring Trend (6 Months)</h3>
-          <div className="flex-1 min-h-0">
+          <ChartCard title="Hiring Trend (6 Months)" icon={TrendingUp}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={hiringTrendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <BarChart data={hiringTrendData} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} />
                 <Tooltip />
-                <Bar dataKey="volume" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={45} />
+                <Bar dataKey="jobs" fill="#00b894" radius={[5, 5, 0, 0]} maxBarSize={38} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </ChartCard>
 
-        {/* Chart 3 */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-[340px]">
-          <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2"><UserCheck size={16} className="text-gray-400" /> Candidate Status</h3>
-          <div className="flex-1 min-h-0">
+          <ChartCard title="Candidate Status" icon={UserCheck}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={candidateData} cx="50%" cy="50%" outerRadius={85} dataKey="value">
-                  {candidateData.map((entry, idx) => <Cell key={idx} fill={CANDIDATE_COLORS[idx % CANDIDATE_COLORS.length]} />)}
+                <Pie data={candidateData} cx="50%" cy="50%" outerRadius={78} dataKey="value">
+                  {candidateData.map((entry, index) => (
+                    <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                  ))}
                 </Pie>
                 <Tooltip />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 11, fontWeight: 600 }} />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </ChartCard>
 
-        {/* Chart 4 */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-[340px]">
-          <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2"><ClipboardList size={16} className="text-gray-400" /> Leave Types</h3>
-          <div className="flex-1 min-h-0">
+          <ChartCard title="Leave Types" icon={ClipboardList}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={leaveData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={2} dataKey="value">
-                  {leaveData.map((entry, idx) => <Cell key={idx} fill={LEAVE_COLORS[idx % LEAVE_COLORS.length]} />)}
+                <Pie data={leaveData} cx="50%" cy="50%" innerRadius={50} outerRadius={76} paddingAngle={2} dataKey="value">
+                  {leaveData.map((entry, index) => (
+                    <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                  ))}
                 </Pie>
                 <Tooltip />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 10, fontWeight: 600 }} />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </ChartCard>
+        </section>
 
-      </div>
-
-      {/* ================= PHASE 2: FEED LIST MATRICES ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Block A: Recent Leave Applications */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col min-h-[420px]">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Calendar size={16} className="text-gray-400" /> Recent Leave Applications</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-slate-100 text-gray-500 font-bold text-[10px] flex items-center justify-center">55</span>
-              <button className="text-[11px] font-bold text-blue-600 hover:underline">View All</button>
-            </div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-            {leaveApplications.map((item, idx) => (
-              <div key={idx} className="p-4 border border-gray-50 rounded-xl bg-slate-50/30 flex justify-between items-start hover:border-gray-100 transition-colors">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-gray-800">{item.name}</h4>
-                  <p className="text-xs font-semibold text-gray-400">{item.type} • <span className="text-gray-300 font-medium">{item.span}</span></p>
+        <section className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <FeedCard title="Recent Leave Applications" icon={Calendar} count="55">
+            {leaveApplications.map((item) => (
+              <div key={`${item.name}-${item.date}`} className="rounded-lg border border-slate-100 bg-slate-50/50 px-4 py-3 flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h4 className="text-[13px] font-semibold text-slate-800 truncate">{item.name}</h4>
+                  <p className="mt-1 text-[11px] font-medium text-slate-500">{item.type} | {item.date}</p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${item.color}`}>{item.status}</span>
+                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-100">
+                  {item.status}
+                </span>
               </div>
             ))}
-          </div>
-        </div>
+          </FeedCard>
 
-        {/* Block B: Recent Candidates */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col min-h-[420px]">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2"><UserCheck size={16} className="text-gray-400" /> Recent Candidates</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-slate-100 text-gray-500 font-bold text-[10px] flex items-center justify-center">5</span>
-              <button className="text-[11px] font-bold text-blue-600 hover:underline">View All</button>
-            </div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-            {recentCandidates.map((candidate, idx) => (
-              <div key={idx} className="p-4 border border-gray-50 rounded-xl bg-slate-50/30 flex justify-between items-start hover:border-gray-100 transition-colors">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-gray-800">{candidate.name}</h4>
-                  <p className="text-xs font-semibold text-gray-400">{candidate.role} • <span className="text-gray-300 font-medium">{candidate.date}</span></p>
+          <FeedCard title="Recent Candidates" icon={UserCheck} count="5">
+            {recentCandidates.map((candidate) => (
+              <div key={`${candidate.name}-${candidate.date}`} className="rounded-lg border border-slate-100 bg-slate-50/50 px-4 py-3 flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h4 className="text-[13px] font-semibold text-slate-800 truncate">{candidate.name}</h4>
+                  <p className="mt-1 text-[11px] font-medium text-slate-500">{candidate.role} | {candidate.date}</p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${candidate.color}`}>{candidate.stage}</span>
+                <StageBadge candidate={candidate} />
               </div>
             ))}
-          </div>
-        </div>
+          </FeedCard>
 
-        {/* Block C: Announcements Log Feed */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col min-h-[420px]">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Bell size={16} className="text-gray-400" /> Recent Announcements</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-slate-100 text-gray-500 font-bold text-[10px] flex items-center justify-center">5</span>
-              <button className="text-[11px] font-bold text-blue-600 hover:underline">View All</button>
-            </div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-            {announcements.map((ann, idx) => (
-              <div key={idx} className="p-4 border border-gray-50 rounded-xl bg-slate-50/30 flex justify-between items-start hover:border-gray-100 transition-colors">
-                <div className="space-y-1 pr-4">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-sm font-bold text-gray-800 leading-tight">{ann.title}</h4>
-                    {ann.badge && <span className="px-2 py-0.5 rounded bg-red-50 text-red-500 border border-red-100/50 text-[9px] font-extrabold uppercase tracking-wider">{ann.badge}</span>}
-                  </div>
-                  <p className="text-xs font-semibold text-gray-400">{ann.type} • <span className="text-gray-300 font-medium">{ann.date}</span></p>
+          <FeedCard title="Recent Announcements" icon={Bell} count="5">
+            {announcements.map((announcement) => (
+              <div key={`${announcement.title}-${announcement.date}`} className="rounded-lg border border-slate-100 bg-slate-50/50 px-4 py-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-[13px] font-semibold text-slate-800">{announcement.title}</h4>
+                  {announcement.priority && (
+                    <span className="px-2 py-0.5 rounded-sm bg-red-50 border border-red-100 text-[9px] uppercase font-bold tracking-wide text-red-500">
+                      High Priority
+                    </span>
+                  )}
                 </div>
+                <p className="mt-1 text-[11px] font-medium text-slate-500">{announcement.category} | {announcement.date}</p>
               </div>
             ))}
-          </div>
-        </div>
+          </FeedCard>
 
-        {/* Block D: Recent Meetings Scheduled */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col min-h-[420px]">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Video size={16} className="text-gray-400" /> Recent Meetings</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-slate-100 text-gray-500 font-bold text-[10px] flex items-center justify-center">5</span>
-              <button className="text-[11px] font-bold text-blue-600 hover:underline">View All</button>
-            </div>
-          </div>
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-            {dynamicMeetings.map((meet, idx) => (
-              <div key={idx} className="p-4 border border-gray-50 rounded-xl bg-slate-50/30 flex justify-between items-start hover:border-gray-100 transition-colors">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-gray-800">{meet.title}</h4>
-                  <p className="text-xs font-semibold text-gray-400">{meet.duration} • <span className="text-gray-300 font-medium">{meet.date}</span></p>
+          <FeedCard title="Recent Meetings" icon={Megaphone} count="5">
+            {meetings.map((meeting) => (
+              <div key={`${meeting.title}-${meeting.date}`} className="rounded-lg border border-slate-100 bg-slate-50/50 px-4 py-3 flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h4 className="text-[13px] font-semibold text-slate-800 truncate">{meeting.title}</h4>
+                  <p className="mt-1 text-[11px] font-medium text-slate-500">{meeting.time} | {meeting.date}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold border bg-blue-50 text-blue-600 border-blue-100">{meet.status}</span>
+                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold border bg-blue-50 text-blue-600 border-blue-100">
+                  {meeting.status}
+                </span>
               </div>
             ))}
-          </div>
-        </div>
+          </FeedCard>
+        </section>
 
-      </div>
-
-      {/* ================= BOTTOM WORKSPACE PANEL: LINE TREND CHART ================= */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-[400px]">
-        <h3 className="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <TrendingUp size={16} className="text-gray-400" /> Employee Growth (2026)
-        </h3>
-        <div className="flex-1 min-h-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={growthTrendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+        <ChartCard title="Employee Growth (2026)" icon={TrendingUp}>
+          <ResponsiveContainer width="100%" height={320}>
+            <AreaChart data={growthData} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.00}/>
+                <linearGradient id="employeeGrowth" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00b894" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#00b894" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} />
               <Tooltip />
-              <Area type="monotone" dataKey="headCount" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#growthGrad)" dot={{ stroke: '#3b82f6', strokeWidth: 2, r: 4, fill: '#fff' }} />
+              <Area type="monotone" dataKey="employees" stroke="#00b894" strokeWidth={3} fill="url(#employeeGrowth)" dot={{ r: 3, fill: '#fff', stroke: '#00b894', strokeWidth: 2 }} />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </ChartCard>
       </div>
-
     </div>
   );
 }
